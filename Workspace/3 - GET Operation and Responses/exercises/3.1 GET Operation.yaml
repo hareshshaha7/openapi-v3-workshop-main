@@ -1,16 +1,14 @@
-# OpenAPI v3 Training Exercise
-
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
   version: 1.0.0
   title: TaxBlaster API
   description: |
     # Exercise: GET Operation
-    
+
     This OpenAPI 2.0 document has `/taxpayers` and `/taxpayers/{id}`
     path items, each with an OPTIONS operation. In this exercise, 
     we'll create GET operations and specify responses on these resources. 
-    
+
     1. On the `/taxpayers` path item, add a GET operation as follows:
         * Description is "Retrieve the entire list of taxpayers."
         * Specify an individual HTTP 200 (OK) response.
@@ -42,38 +40,60 @@ info:
        
     6. On the `/taxpayers/{id}` GET method, add a default response
        similar to step 3.      
-
 paths:
-
   /taxpayers:
+    options:
+      description: Retrieve the entire list of taxpayers.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '../../5 - POST, PATCH, and PUT/exercises/5.1 POST Operation.yaml#/components/schemas/Taxpayers'
+        '400':
+          description: The request may have included an unrecognized or unsupported parameter.
+          content:
+            application/json:
+              schema:
+                $ref: '../../5 - POST, PATCH, and PUT/exercises/5.1 POST Operation.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected error in processing the request.
+  '/taxpayers/{id}':
+    parameters:
+      - description: Retrieve an individual taxpayer.
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
     options:
       description: Request information about methods available
       responses:
         '200':
           description: OK
-
-  /taxpayers/{id}:
-    parameters:
-    - description: ID of the individual taxpayer.
-      name: id
-      in: path
-      required: true
-      schema:
-        type: string
-    options:
-      description: Request information about methods available
-      responses:
-        '200':
-          description: OK    
-
+          content:
+            application/json:
+              schema:
+                $ref: '../../5 - POST, PATCH, and PUT/exercises/5.1 POST Operation.yaml#/components/schemas/Taxpayer'
+        '404':
+          description: A taxpayer with the specified ID could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '../../5 - POST, PATCH, and PUT/exercises/5.1 POST Operation.yaml#/components/schemas/ErrorResponse'
+        '500':
+          description: Unexpected error in processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: '../../5 - POST, PATCH, and PUT/exercises/5.1 POST Operation.yaml#/components/schemas/ErrorResponse'
 components:
-
   schemas:
-
     TaxFiling:
       type: object
       required:
-        - filingID  
+        - filingID
       properties:
         filingID:
           type: string
@@ -86,16 +106,14 @@ components:
           format: date
         isJointFiling:
           type: boolean
-          
     TaxFilings:
       type: array
       items:
-        $ref: "#/components/schemas/TaxFiling"
-  
+        $ref: '#/components/schemas/TaxFiling'
     Taxpayer:
       type: object
       required:
-      - taxpayerID
+        - taxpayerID
       properties:
         taxpayerID:
           type: string
@@ -105,12 +123,10 @@ components:
           type: string
         maritalStatus:
           type: boolean
-          
     Taxpayers:
       type: array
       items:
-        $ref: "#/components/schemas/Taxpayer"
-        
+        $ref: '#/components/schemas/Taxpayer'
     ErrorResponse:
       description: An error string returned from a bad response.
       type: object
